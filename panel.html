@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Viewer Page</title>
+</head>
+<body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+    <div id="app" class="full-height"></div>
+    <form id="myForm">
+        Would you rather 
+        <select id="selectA">
+        </select>
+        or 
+        <select id="selectB">
+        </select>
+        ?  
+        <input type="submit" value="Submit">
+    </form>
+  
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" type="text/javascript"></script>
+  <script>
+    $.ajax({
+      url: 'http://localhost:3000/options-list',
+      type: 'GET',
+      contentType: 'application/json',
+      success: function(data) {
+        console.log('success, data: ', data);
+        var selectA = document.getElementById('selectA');
+        var selectB = document.getElementById('selectB');
+        data.forEach((option) => {
+          var optionA = document.createElement('option');
+          optionA.text = option;
+          optionA.value = option;
+          selectA.add(optionA);
+          var optionB = document.createElement('option');
+          optionB.text = option;
+          optionB.value = option;
+          selectB.add(optionB);
+        });
+      },
+      error: function(err) {
+        console.log(err);
+      }
+    });
+
+    document.getElementById('myForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      var optionA = document.getElementById('selectA').value;
+      var optionB = document.getElementById('selectB').value;
+      var data = { optionA, optionB };
+      $.ajax({
+        url: 'http://localhost:3000/question',
+        type: 'POST',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(data) {
+          console.log('success, data: ', data);
+        },
+        error: function(err) {
+          console.log(err);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
